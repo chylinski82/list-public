@@ -1,0 +1,121 @@
+header {
+  width: 100%;
+  margin-bottom: 5px;
+  background-color: azure;
+  font-size: 24px;
+  display: flex;
+  justify-content: space-around;
+}
+
+header input {
+  background-color: azure;
+  font-size: 24px;
+}
+
+.material-icons {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.main {
+  max-width: 100%;
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px;
+}
+
+form, textarea, input {
+  width: 100%;
+  border: none;
+}
+
+form {
+  display: flex;
+  position: relative;
+  align-items: stretch;
+}
+
+
+textarea {
+  font-family: "Open Sans", sans-serif;
+  height: 2.5em;
+  margin-bottom: 0;
+  padding: 2px 9.5px;
+  outline: none;
+  box-sizing: border-box;
+  resize: none;
+}
+
+input {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 16px;
+  padding: 7px 9.5px 9px;
+  margin: 0;
+  outline: none;
+}
+
+input::placeholder {
+  font-family: "Open Sans", sans-serif;
+}
+
+input:focus, input:focus + button, input:focus + button + button, input:focus + button + button + button,
+ input:focus + button + button + button + button, input:focus + button + button + button + button + button,
+ input:focus + button + button + button + button + button + button {
+  background-color: azure;
+}
+
+.even {
+  background-color: rgb(118, 227, 227);
+}
+
+.odd {
+  background-color: rgb(114, 252, 252);
+}
+
+.even-important {
+  background-color: #ffb200;
+}
+
+.odd-important {
+  background-color: #ffcc00;
+}
+
+.even-unimportant {
+  background-color: #eb8fff;
+}
+
+.odd-unimportant {
+  background-color: #f7b5ff;
+}
+
+button {
+  width: 9%;
+  height: 100%;
+  border: none;
+  position: absolute;
+  right: 0
+}
+
+button:disabled {
+  visibility: hidden;
+}
+
+#action, #comments {
+  position: absolute;
+  right: 9%;
+}
+
+#unimportant {
+  right: 18%;
+}
+
+#important {
+  right: 27%;
+}
+
+#down {
+  right: 36%;
+}
+
+#up {
+  right: 45%;
+}
