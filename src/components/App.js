@@ -17,94 +17,102 @@ const firebaseConfig = {
 };
 
 function App() {
-  // init firebase
+  // initialize firebase
   initializeApp(firebaseConfig)
 
-  // init services
+  // initialize firestore
   const db = getFirestore()
  
+  // state to hold all items
   const [items, setItems] = useState([]); 
+  // state to hold all item ids
   const [itemIds, setItemIds] = useState([]);
-  const [toggle, setToggle] = useState(false);                  // listener to execute add/remove tiles
+  // state for toggle (to execute add/remove tiles)
+  const [toggle, setToggle] = useState(false);
 
+  // state for current list
   const [currentList, setCurrentList] = useState('shopping list');
-  const [lists, setLists] = useState(['shopping list', 'to do list']);
+  // state for all lists
+  const [lists, setLists] = useState(['shopping list', 'to do list', 'samaya']);
 
+  // template for a new item
   const newItem = {
     contents: '',
     important: false,
     unimportant: false,
     comments: '',
     date: Math.floor(new Date() / 100),
-    queryPreference: Math.floor(new Date() / 100)              // this number will increse/decrease based on important/unimportant
+    queryPreference: Math.floor(new Date() / 100) // this number will increse/decrease based on important/unimportant
   };
 
-  let firestoreList = [];                                       // array of objects from firestore
-  let firestoreIds = [];                           
+  // array of objects from firestore
+  let firestoreList = [];                                       
+    // array of ids from firestore
+    let firestoreIds = [];                           
   
-  useEffect(() => {
-    const getData = () => {                                       // get data from firestore to app
-     
-      const q = query(collection(db, `lists/my lists/${currentList}`), orderBy('queryPreference'));
-  
-      onSnapshot(q, (snapshot) => {
-        firestoreList = [];                                       // reset firestoreList after every change to avoid copies in items array
-        firestoreIds = [];
-        snapshot.docs.forEach((doc) => {
-          firestoreList.push({ ...doc.data(), id: doc.id });
-          firestoreIds.every(id => id !== doc.id) && firestoreIds.push(doc.id);
-          
-        });
-        if (firestoreList.length === 0) {
-          setItems(items.concat(newItem));
-        } else {
-          setItemIds(firestoreIds);
-          setItems(firestoreList);
-        }
-      }); 
-    }
-
-    getData();
-    //console.log('get data test')
-  }, [currentList]);
-
-  const addToFirestore = async (tile) => {
-    console.log('add ids', itemIds, 'cont', tile.contents);
-    const docRef = doc(db, `lists/my lists/${currentList}`, tile.contents);
-    if (itemIds.every(id => id !== tile.contents)) {                    // add item to collection only if item with same contents doesn't exist
-      try {
-          await setDoc(docRef, tile);
-          console.log("Entire Document has been added successfully.");
-          setToggle(!toggle);
-      } catch(ex) {
-          console.log(ex); 
+    useEffect(() => {
+      const getData = () => {                                       // get data from firestore to app
+       
+        const q = query(collection(db, `lists/my lists/${currentList}`), orderBy('queryPreference'));
+    
+        onSnapshot(q, (snapshot) => {
+          firestoreList = [];                                       // reset firestoreList after every change to avoid copies in items array
+          firestoreIds = [];
+          snapshot.docs.forEach((doc) => {
+            firestoreList.push({ ...doc.data(), id: doc.id });
+            firestoreIds.every(id => id !== doc.id) && firestoreIds.push(doc.id);
+            
+          });
+          if (firestoreList.length === 0) {
+            setItems(items.concat(newItem));
+          } else {
+            setItemIds(firestoreIds);
+            setItems(firestoreList);
+          }
+        }); 
       }
-    } 
-  }
-
-  const updateFirestoreDoc = async (tile) => {
-    const docRef = doc(db, `lists/my lists/${currentList}`, tile.id);
+  
+      getData();
+    }, [currentList]);
+  
+    const addToFirestore = async (tile) => {
+      const docRef = doc(db, `lists/my lists/${currentList}`, tile.contents);
+      if (itemIds.every(id => id !== tile.contents)) {                    // add item to collection only if item with same contents doesn't exist
+        try {
+            await setDoc(docRef, tile);
+            console.log("Entire Document has been added successfully.");
+            setToggle(!toggle);
+        } catch(ex) {
+            console.log(ex); 
+        }
+      } 
+    }
+  
+    const updateFirestoreDoc = async (tile) => {
+        // update doc in firestore
+        const docRef = doc(db, `lists/my lists/${currentList}`, tile.id);
+        try {
+            await updateDoc(docRef, tile);
+            console.log("Entire Document has been updated successfully.");
+            setToggle(!toggle);
+        } catch(ex) {
+            console.log(ex); 
+        }
+      }
+      
+    // remove doc from firestore
+    const removeFromFirestore = async (id) => {
+      const docRef = doc(db, `lists/my lists/${currentList}`, id);
       try {
-        await updateDoc(docRef, tile);
-        console.log("Document has been updated successfully.");
+        await deleteDoc(docRef)
+        console.log("Entire Document has been deleted successfully.");
         setToggle(!toggle);
       } catch(ex) {
-        console.log(ex);
+        console.log(ex); 
       }
-  }
-
-  const removeFromFirestore = async (id) => {
-    const docRef = doc(db, `lists/my lists/${currentList}`, id);
-    try {
-      await deleteDoc(docRef)
-      console.log("Entire Document has been deleted successfully.");
-      setToggle(!toggle);
-    } catch(ex) {
-      console.log(ex); 
     }
-  }
 
-  let key = -1;
+    let key = -1;
 
   return (
     <>

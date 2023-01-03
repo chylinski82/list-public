@@ -11,9 +11,11 @@ const Tile = ({ tile,
                 newItem, 
                 addToFirestore, 
                 updateFirestoreDoc, 
-                removeFromFirestore }) => { 
+                removeFromFirestore,
+            }) => { 
 
-    const [isAddDisabled, setIsAddDisabled] = useState(true);                   // 3 state variables to toggle visibility and disabled status of functional buttons
+    // 3 state variables to toggle visibility and disabled status of functional buttons
+    const [isAddDisabled, setIsAddDisabled] = useState(true);
     const [isRemoveDisabled, setIsRemoveDisabled] = useState(false);
     const [isActionDisabled, setIsActionDisabled] = useState(false);
     const [isComments, setIsComments] = useState(false);
@@ -25,6 +27,7 @@ const Tile = ({ tile,
     }, [toggle]);
 
     const handleChange = (value) => { 
+        // update contents of tile and toggle component to update firestore
         tile.contents = value.toLowerCase();
         if (tile.contents === '') {
             removeFromFirestore(tile.id);
@@ -33,12 +36,14 @@ const Tile = ({ tile,
     }
 
     const handleChangeComments = (value) => {
+        // update comments of tile and toggle component to update firestore
         tile.comments = value;
         itemIds.some(id => id === tile.contents) ? updateFirestoreDoc(tile) : addToFirestore(tile);
         setToggle(!toggle);
     }
 
     const colorPicker = () => {
+        // pick color based on tile index and importance
         if (items.indexOf(tile) % 2 === 0) {
            if (tile.important) {
                 return 'even-important';
@@ -55,6 +60,7 @@ const Tile = ({ tile,
     }
 
     const colorPickerOpposite = () => {
+        // pick opposite color based on colorPicker() output
         switch (colorPicker()) {
             case 'even':
                 return 'odd';
@@ -104,7 +110,7 @@ const Tile = ({ tile,
                         console.log('ids', itemIds);
                         setIsActionDisabled(false);
                         console.log('blurred');
-                        itemIds.some(id => id === tile.contents) ? updateFirestoreDoc(tile) : addToFirestore(tile);
+                        itemIds.some(id => id === tile.id) ? updateFirestoreDoc(tile) : addToFirestore(tile);
                     }}
                     onFocus={() => {
                         addRemoveTiles();
